@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <title>Atalhos úteis do Docker</title>
+  </head>
+  <body>
+    <h1>Atalhos úteis do Docker</h1>
+    <p>Primeiro é preciso verificar se o Kernel do seu linux é 3.8. Veja isso digitando no terminal uname -r</p>
+    <p>Iniciar o Docker: /etc/init.d/docker start</p>
+    <p>Checar se o Docker está funcionando: ps -ef | grep docker</p>
+    <p>Informa os containers que estão rodando no momento: docker ps</p>
+    
+    <h3>Entendendo as saídas do 'docker ps':</h3>
+    <ul>
+      <li>CONTAINER ID: identificação do container</li>
+      <li>IMAGE: imagem que o container está utilizando</li>
+      <li>COMMAND: qual o comando que o container está executando</li>
+      <li>CREATED: há quanto tempo o container foi criado</li>
+      <li>STATUS: identifica há quanto tempo ele está executando</li>
+      <li>PORTS: a porta em que a imagem está sendo executada </li>
+      <li>NAMES: nome do container </li>
+    </ul>
+    <p>Ver as imagens que estão na máquina: docker images</p>
+    <p>Criando um container ubuntu: docker run -i -t ubuntu:14.10 /bin/bash</p>
+    <ul>
+      <li>Mais sobre esse tópico: ubuntu:14.10 /bin/bash (distro:versão comando-a-ser-executado)</li>
+    </ul>
+    <p>Após fazer o download o sistema já estará rodando noutra máquina, você pode verificar isso através do comando cat /etc/issue</p>
+    <ul>
+      <li>OBS: lembrando que ainda se trata de um container, ou seja, não possui kernel próprio, nem bibliotecas, nem binários, ele utiliza os da máquina host onde o docker foi instalado..</li>
+    </ul>
+    <p>Ver processos sendo executados pelo container: ps -ef</p>
+    <p>SAIR DO CONTAINER:</p>
+    <ul>
+      <li>CUIDADO, ao clicar ctrl+d, você irá encerrar o container. Para sair do container, mas deixá-lo ativo, você digita ctrl+p+q.</li>
+      <li>Você pode checar se o container ainda está rodando e que você apenas saiu dele é só digitar no terminal 'docker ps'</li>
+      <li>Para voltar ao container digite: docker attach CONTAINER-ID</li>
+    </ul>
+    <p>Verificando as alterações feitas no container: docker diff CONTAINER-ID</p>
+    
+    <h3>Exemplo</h3>
+    <p>Criar um container de um web server (NGINX), que irá exibir uma página mostrando que o programa funciona.Vamos lá!</p>
+    <ul>
+      <li>Criar o container: docker run -i -t -p 8080:80 ubuntu:14.10 /bin/bash</li>
+      <ul>
+        <li>-p == porta</li>
+        <li>8080 = porta da máquina física (host)</li>
+        <li>80 = porta do container</li>
+        <p>Dessa forma, pegaremos a porta 80 do container que irá expor essa porta na porta 8080 do ip da máquina (host). Com isso, acessando num browser, ao digitar 8080 irá exibir a página do web server que estará instalada no container rodando na porta 80 do container.</p>
+       </ul>
+      <li>Instalar o NGINX: apt-get install nginx</li>
+      <li>Para ver os processos funcionando: ps -ef</li>
+      <li>Iniciar o NGINX: /etc/init.d/nginx start</li>
+      <ul>
+        <li>OBS: pela minha máquina não consegui inslar inicialmente, pois o container estava com problemas com o apt-get update. Resolvi através <a href="https://futurestud.io/tutorials/how-to-fix-ubuntu-debian-apt-get-404-not-found-repository-errors"> desse link. </a>  </li>
+      </ul>
+      <li></li>
+    </ul>
+    <header></header>
+    <main></main>
+    <footer></footer>
+  </body>
+</html>
