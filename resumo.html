@@ -2,11 +2,13 @@
 <html lang="">
   <head>
     <meta charset="utf-8">
-    <title>Atalhos úteis do Docker</title>
+    <title>Docker Basics</title>
   </head>
   <body>
-    <h1>Atalhos úteis do Docker</h1>
+    <h1>Tutorial Básico de Docker</h1>
+    <h2>Baseada nas video aulas do usuário do youtube LINUXtips.</h2>
     <p>Primeiro é preciso verificar se o Kernel do seu linux é 3.8. Veja isso digitando no terminal uname -r</p>
+    <p><a href="https://docs.docker.com/engine/install/ubuntu/">Instalar o Docker.</a></p>
     <p>Iniciar o Docker: /etc/init.d/docker start</p>
     <p>Checar se o Docker está funcionando: ps -ef | grep docker</p>
     <p>Informa os containers que estão rodando no momento: docker ps</p>
@@ -39,7 +41,7 @@
     </ul>
     <p>Verificando as alterações feitas no container: docker diff CONTAINER-ID</p>
     
-    <h3>Exemplo</h3>
+    <h3>Exemplo 1</h3>
     <p>Criar um container de um web server (NGINX), que irá exibir uma página mostrando que o programa funciona.Vamos lá!</p>
     <ul>
       <li>Criar o container: docker run -i -t -p 8080:80 ubuntu:14.10 /bin/bash</li>
@@ -55,10 +57,63 @@
       <ul>
         <li>OBS: pela minha máquina não consegui inslar inicialmente, pois o container estava com problemas com o apt-get update. Resolvi através <a href="https://futurestud.io/tutorials/how-to-fix-ubuntu-debian-apt-get-404-not-found-repository-errors"> desse link. </a>  </li>
       </ul>
-      <li></li>
+      <li>Podemos ver os processos do nginx através do comando: ps -ef</li>
+      <li>Verificando se a porta 80 está 'escutando' (LISTEN)  no container: netstat -atunp</li>
+      <li>Saia do container sem desligá-lo: ctrl+p+q</li>
+      <li>Vá ao seu browser e digite SEU-IP:8080. Irá aparecer no broser a seguinte página:</li>
+      <img src="nginx.png">
+      <li>Se digitarmos docker diff CONTAINER-ID iremos perceber que foram feitas várias alterações no container. Se fecharmos com ctrl+d tudo que foi alterado será perdido. Para evitar isso vamos fazer um commit nessas modificações, criando uma imagem desse container. Para fazer isso vamos digitar docker commit CONTAINER-ID NOME_QUE_VOCE_DARA_A_IMAGEM/TITULO_E_VERSÃO</li>
+      <ul>
+        <li>No caso do exemplo, ficará assim: docker commit ff4e50247633 maria/nginx-ubuntu:1.0</li>
+      </ul>
+      <li>Podemos checar a imagem 'commitada' usando o comando docker images</li>
     </ul>
-    <header></header>
-    <main></main>
-    <footer></footer>
+    
+    <h3>Exemplo 2: criar um segundo container</h3>
+    <p>Agora iremos um segundo container NGINX usando outra porta no host (6660)  para a porta 80 do container. Vamos lá!</p>
+    <ul>
+      <li>Suba o novo container com: docker run -i -t -p 6660:80 maria/nginx-ubuntu:1.0 /bin/bash</li>
+      
+      <li>Inicie o nginx: /etc/init.d/nginx start</li>
+      <li>Cheque se o nginx está sendo executado: ps -ef</li>
+      <li>Saia do container com ctrl+p+q</li>
+      <li>Verifique se a imagem está listada: docker ps</li>
+      <li>Vá ao browser e digite SEU-IP:6660. Irá aparecer a página do nginx respectiva a esse container que criamos.</li>
+      <img src="nginx.png">
+    </ul>
+    <p>Se quisermos checar se realmente os acessos a página estão ocorrendo fazemos:</p>
+    <ul>
+      <li>Acesse o container: docker attach CONTAINER-ID</li>
+      <ul>
+        <li>No meu caso, esse comando não funcionou, o container travava, consegui rodar o container digitando: docker run -it IMAGE-NOME (docker run -it maria/nginx-ubuntu:1.0</li>
+        <ul>
+          <li><font color="red">Ajeitar essa parte, pois o comando run na verdade cria um novo container e a ideia é abrir um container já existente.OBS: <a href="https://github.com/moby/moby/issues/8521">resolvido aqui.</a></font></li>
+        </ul>
+      </ul>
+      <li>Veja o log de acessos ao container: tail -f /var/log/nginx/access.log</li>
+    </ul>
+  <p>Por fim, se queremos parar um container: docker stop CONTAINER-ID</p>
+  <p>Lembrando que sempre que quisermos abrir o container podemos fazer: docker run -ti IMAGE-NOME /bin/bash</p>
+  
+  <h2>Alguns Comandos:</h2>
+  <h3>docker exec</h3>
+  <p>Usado quando quisermos usar um comando dentro do container. Exemplos:</p>
+  <ul>
+    <li>docker exec CONTAINER-ID ps -ef</li>
+    <li>Parando o nginx do container (caso exista): docker exec CONTAINER-ID /etc/init.d/nginx stop</li>
+    <li>Iniciando o nginx: docker exec CONTAINER-ID /etc/init.d/nginx start</li>
+  </ul>
+  
+  <h3>docker inspect</h3>
+  <p>Permite ver detalhes sobre o container em execução.</p>
+  <p>docker inspect CONTAINER-ID</p>
+  <p>Com eles podemos ver o IP do container, as portas, a data em que o container foi criado, entre outras informações.</p>
+
+  <h3>Ver a tela de boas vindas do nginx</h3>
+  <p>Pegue o ip encontrado no docker inspect. Digite: curl NUMERO-IP:80</p>
+  <p>Ou então pegue o ip do ifconfig. Digite: curl NUMERO-IP:8080</p>     
+  <header></header>
+  <main></main>
+  <footer></footer>
   </body>
 </html>
