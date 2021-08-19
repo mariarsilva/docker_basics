@@ -159,9 +159,10 @@
     <ul>
       <li>No nosso caso será: FROM ubuntu:14.04</li>
     </ul>
-    <li>Próxima linha MANTAINER: nome de quem criou o dockerfile </li>
+    <li>Próxima linha MAINTAINER: nome de quem criou o dockerfile </li>
     <ul>
-      <li>No nosso caso será: MANTAINER maria@email.com</li>
+      <li>No nosso caso será: MAINTAINER maria@email.com</li>
+      <li>OBS: MAINTAINER é uma label <a href="https://cursos.alura.com.br/forum/topico-maintainer-deprecated-87916">depreciada</a>. O novo formato é LABEL mantainer="nome"</li>
     </ul>
     <li>Próxima linha RUN: comando que se deseja executar</li>
     <ul>
@@ -171,6 +172,17 @@
       <li>-y: significa YES, é preciso usá-lo, para que confirme automaticamente a instalação do pacote.</li>
       <li>clean: limpa todos os pacotes durante a instalação, para deixar o container bem enxuto.</li>
       </ul>
+      <ul>
+        <li>OBS: para salvar e sair do VIM: :wq</li>
+      </ul>
+    </ul>
+  </ul>  
+  <h3>Construindo a imagem através do dockerfile (build)</h3>
+  <p>IMPORTANTE: é preciso estar no diretório do dockerfile. Podemos checar isso vendo o caminho (path) atual com 'pwd' no terminal e depois pedindo para listar os arquivos com 'ls'. Se o arquivo existe irá aparecer listado ('Dockerfile'). Agora vamos lá! Criando a imagem:</p>
+  <ul>
+    <li>Criando a imagem: docker build .</li>
+    <ul>
+      <li>. = representa o nosso diretório atual.</li>
     </ul>
   </ul>  
 
