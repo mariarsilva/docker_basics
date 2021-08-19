@@ -111,7 +111,69 @@
 
   <h3>Ver a tela de boas vindas do nginx</h3>
   <p>Pegue o ip encontrado no docker inspect. Digite: curl NUMERO-IP:80</p>
-  <p>Ou então pegue o ip do ifconfig. Digite: curl NUMERO-IP:8080</p>     
+  <p>Ou então pegue o ip do ifconfig. Digite: curl NUMERO-IP:8080</p>
+
+  <h3>docker stats</h3>
+  <p>Verifica o quanto o container está consumindo de CPU, memória e rede, se está sobrecarregando o host, etc </p>
+  <p>docker stats CONTAINER-ID</p>
+  <img src="stats.png">
+
+  <h3>docker stop</h3>
+  <p>Parar o container</p>
+  <p>docker stop CONTAINER-ID</p>
+  <p>OBS: não irá remover o container, você pode reacessá-lo com: docker start CONTAINER-ID</p>
+  
+  <h3>docker rm</h3>
+  <p>Exclui o container da máquina.</p>
+  <p>docker rm CONTAINER-ID</p>
+  <p>É importante que paremos o container (docker stop) antes de removê-lo. Se quisermos forçar um container em execução a ser excluído, fazemos: docker rm -f CONTAINER-ID</p>
+  
+  <h3>docker rmi</h3>
+  <p>Exclui a imagem do hd.</p>
+  <p>docker rmi IMAGE-ID</p>
+  <p>Antes:</p>
+  <img src="rmi1.png">
+  <p>Depois:</p>
+  <img src="rmi2.png">
+  <p>Se a imagem estiver em execução será preciso forçar: docker rmi -f IMAGE-ID</p>     
+  
+  <h3>Fazendo dois containers se comunicarem</h3>
+  <p>docker run -it --name web2 --link CONTAINER-NAME:web1 REPOSITORY:TAG</p>
+  <p>No caso dos containers escolhidos por mim serão </p>
+  <p>Às vezes não dará erro para criar algum container com um nome já usado antes, para isso, podemos remover em lote todos os containers não utilizado de uma só vez: docker container prune (caso deseje forçar a exclusão, insira -f)</p>
+  <p>Para listar todos os conteineres não utilizados: docker container ls -a --filter status=exited --filter status=created </p>
+  
+  <h2>Criando imagens de container com Dockerfiles</h2>
+  <img src="dfile.png"> 
+  <p>Arquivo onde você coloca cada passo na criação de uma imagem de container. Lembra o makefile do linux.</p>
+  <p>Por exemplo, se queremos usar uma imagem do Apache já no Dockerhub (na internet) e vamos imaginar que queremos colocar os arquivos do seu site dentro dessa imagem de container junto com suas configurações personalizadas. A melhor forma é criando um Dockerfile, que irá permitir criar uma imagem personalizada. Sabendo disso, vamos montar nosso Dockerfile.</p>
+  <ul>
+    <li>Crie um diretório de nome Dockerfile: mkdir Dockerfile</li>
+    <li>Procure a pasta Dockerfile: cd Dockerfile</li>
+    <li>Crie o diretório Apache: mkdir apache</li>
+    <ul>
+      <li>Importante: só é possível criar um Dockerfile por diretório.</li>
+    </ul>
+    <li>Dentro do diretório do apache digite: vim Dockerfile</li>
+    <li>A primeira linha do Dockerfile é o FROM, que contem a imagem base que você vai utilizar para criar essa outra imagem.</li>
+    <ul>
+      <li>No nosso caso será: FROM ubuntu:14.04</li>
+    </ul>
+    <li>Próxima linha MANTAINER: nome de quem criou o dockerfile </li>
+    <ul>
+      <li>No nosso caso será: MANTAINER maria@email.com</li>
+    </ul>
+    <li>Próxima linha RUN: comando que se deseja executar</li>
+    <ul>
+      <li>No nosso caso será: RUN apt-get update && apt-get install -y apache2 &&apt-get clean</li>
+      <ul>
+      <li>apt-get update: atualiza a lista de diretórios.</li>
+      <li>-y: significa YES, é preciso usá-lo, para que confirme automaticamente a instalação do pacote.</li>
+      <li>clean: limpa todos os pacotes durante a instalação, para deixar o container bem enxuto.</li>
+      </ul>
+    </ul>
+  </ul>  
+
   <header></header>
   <main></main>
   <footer></footer>
