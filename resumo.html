@@ -1,104 +1,156 @@
 <!DOCTYPE html>
 <html lang="">
-  <head>
-    <meta charset="utf-8">
-    <title>Docker Basics</title>
-  </head>
-  <body>
-    <h1>Tutorial Básico de Docker</h1>
-    <h2>Baseada nas video aulas do usuário do youtube LINUXtips.</h2>
-    <p>Primeiro é preciso verificar se o Kernel do seu linux é 3.8. Veja isso digitando no terminal uname -r</p>
-    <p><a href="https://docs.docker.com/engine/install/ubuntu/">Instalar o Docker.</a></p>
-    <p>Iniciar o Docker: /etc/init.d/docker start</p>
-    <p>Checar se o Docker está funcionando: ps -ef | grep docker</p>
+<head>
+  <meta charset="utf-8">
+  <link href="base.css" rel="stylesheet">
+  <title>Docker Basics</title>
+</head>
+<body>
+  <h1>Tutorial Básico de Docker</h1>
+  <h2>Baseada nas video aulas do usuário do youtube <a href="https://www.youtube.com/channel/UCJnKVGmXRXrH49Tvrx5X0Sw">LINUXtips</a>.</h2>
+  <p>Primeiro é preciso verificar se o Kernel do seu linux é 3.8. Veja isso digitando no terminal uname -r</p>
+  <p><a href="https://docs.docker.com/engine/install/ubuntu/">Instalar o Docker.</a></p>
+  <p>Iniciar o Docker: /etc/init.d/docker start</p>
+  <p>Checar se o Docker está funcionando: ps -ef | grep docker</p>
+  <ul>
+    <li>grep = procura por trechos de texto (strings) dentro de arquivos ou diretórios e retorna para você em quais arquivos a string foi encontrada, inclusive mostrando a linha em que isso ocorreu.</li>
+  </ul>
+  <p>Informa os containers que estão rodando no momento: docker ps</p>
+  <h3>O que é container?</h3>
+  <p>Pense na sua aplicação. Java, Ruby, etc. Ela precisa das bibliotecas, dos binários, dentre outras características. O container pega a sua aplicação com suas características e transforma em algo similar a um binário, que possui tudo o que sua aplicação precisa para funcionar. A isso chamamos de container.</p>
+  <p>Entretanto, se a sua applicação precisa se comunicar, não é com o kernel do container, pois ele não possui kernel. Será usado, então, o kernel da máquina hospedeira (host) para essa comunicação. Assim, um único kernel irá se comunicar com todos os containers.</p>
+  <p>Container NÃO É uma máquina virtual (VM). Uma máquina virtual é a virtualização de um sistema operacional inteiro, consumindo muito mais recursos do host do que um container.</p>
+
+  <h3>Entendendo as saídas do 'docker ps':</h3>
+  <ul>
+    <li>CONTAINER ID: identificação do container</li>
+    <li>IMAGE: imagem que o container está utilizando</li>
+    <li>COMMAND: qual o comando que o container está executando</li>
+    <li>CREATED: há quanto tempo o container foi criado</li>
+    <li>STATUS: identifica há quanto tempo ele está executando</li>
+    <li>PORTS: a porta em que a imagem está sendo executada </li>
+    <li>NAMES: nome do container </li>
+  </ul>
+  <p>Ver as imagens que estão na máquina: docker images</p>
+  <p>Criando um container ubuntu: docker run -i -t ubuntu:14.10 /bin/bash</p>
+  <ul>
+    <li>Mais sobre esse tópico: ubuntu:14.10 /bin/bash (distro:versão comando-a-ser-executado)</li>
+  </ul>
+  <p>Após fazer o download o sistema já estará rodando noutra máquina, você pode verificar isso através do comando cat /etc/issue</p>
+  <ul>
+    <li>OBS: lembrando que ainda se trata de um container, ou seja, não possui kernel próprio, nem bibliotecas, nem binários, ele utiliza os da máquina host onde o docker foi instalado..</li>
+  </ul>
+  <p>Ver processos sendo executados pelo container: ps -ef</p>
+  <p>SAIR DO CONTAINER:</p>
+  <ul>
+    <li>CUIDADO, ao clicar ctrl+d, você irá encerrar o container. Para sair do container, mas deixá-lo ativo, você digita ctrl+p+q.</li>
+    <li>Você pode checar se o container ainda está rodando e que você apenas saiu dele é só digitar no terminal 'docker ps'</li>
+    <li>Para voltar ao container digite: docker attach CONTAINER-ID</li>
+  </ul>
+  <p>Verificando as alterações feitas no container: docker diff CONTAINER-ID</p>
+  
+  <h3>Exemplo 1</h3>
+  <p>Criar um container de um web server (NGINX), que irá exibir uma página mostrando que o programa funciona.Vamos lá!</p>
+  <ul>
+    <li>Criar o container: docker run -i -t -p 8080:80 ubuntu:14.10 /bin/bash</li>
     <ul>
-      <li>grep = procura por trechos de texto (strings) dentro de arquivos ou diretórios e retorna para você em quais arquivos a string foi encontrada, inclusive mostrando a linha em que isso ocorreu.</li>
+      <li>-p == porta</li>
+      <li>8080 = porta da máquina física (host)</li>
+      <li>80 = porta do container</li>
+      <p>Dessa forma, pegaremos a porta 80 do container que irá expor essa porta na porta 8080 do ip da máquina (host). Com isso, acessando num browser, ao digitar 8080 irá exibir a página do web server que estará instalada no container rodando na porta 80 do container.</p>
     </ul>
-    <p>Informa os containers que estão rodando no momento: docker ps</p>
+    <li>Instalar o NGINX: apt-get install nginx</li>
+    <li>Para ver os processos funcionando: ps -ef</li>
+    <li>Iniciar o NGINX: /etc/init.d/nginx start</li>
+    <ul>
+      <li>OBS: pela minha máquina não consegui inslar inicialmente, pois o container estava com problemas com o apt-get update. Resolvi através <a href="https://futurestud.io/tutorials/how-to-fix-ubuntu-debian-apt-get-404-not-found-repository-errors"> desse link. </a>  </li>
+    </ul>
+    <li>Podemos ver os processos do nginx através do comando: ps -ef</li>
+    <li>Verificando se a porta 80 está 'escutando' (LISTEN)  no container: netstat -atunp</li>
+    <li>Saia do container sem desligá-lo: ctrl+p+q</li>
+    <li>Vá ao seu browser e digite SEU-IP:8080. Irá aparecer no broser a seguinte página:</li>
+    <img src="nginx.png">
+    <li>Se digitarmos docker diff CONTAINER-ID iremos perceber que foram feitas várias alterações no container. Se fecharmos com ctrl+d tudo que foi alterado será perdido. Para evitar isso vamos fazer um commit nessas modificações, criando uma imagem desse container. Para fazer isso vamos digitar docker commit CONTAINER-ID NOME_QUE_VOCE_DARA_A_IMAGEM/TITULO_E_VERSÃO</li>
+    <ul>
+      <li>No caso do exemplo, ficará assim: docker commit ff4e50247633 maria/nginx-ubuntu:1.0</li>
+    </ul>
+    <li>Podemos checar a imagem 'commitada' usando o comando docker images</li>
+  </ul>
     
-    <h3>Entendendo as saídas do 'docker ps':</h3>
-    <ul>
-      <li>CONTAINER ID: identificação do container</li>
-      <li>IMAGE: imagem que o container está utilizando</li>
-      <li>COMMAND: qual o comando que o container está executando</li>
-      <li>CREATED: há quanto tempo o container foi criado</li>
-      <li>STATUS: identifica há quanto tempo ele está executando</li>
-      <li>PORTS: a porta em que a imagem está sendo executada </li>
-      <li>NAMES: nome do container </li>
-    </ul>
-    <p>Ver as imagens que estão na máquina: docker images</p>
-    <p>Criando um container ubuntu: docker run -i -t ubuntu:14.10 /bin/bash</p>
-    <ul>
-      <li>Mais sobre esse tópico: ubuntu:14.10 /bin/bash (distro:versão comando-a-ser-executado)</li>
-    </ul>
-    <p>Após fazer o download o sistema já estará rodando noutra máquina, você pode verificar isso através do comando cat /etc/issue</p>
-    <ul>
-      <li>OBS: lembrando que ainda se trata de um container, ou seja, não possui kernel próprio, nem bibliotecas, nem binários, ele utiliza os da máquina host onde o docker foi instalado..</li>
-    </ul>
-    <p>Ver processos sendo executados pelo container: ps -ef</p>
-    <p>SAIR DO CONTAINER:</p>
-    <ul>
-      <li>CUIDADO, ao clicar ctrl+d, você irá encerrar o container. Para sair do container, mas deixá-lo ativo, você digita ctrl+p+q.</li>
-      <li>Você pode checar se o container ainda está rodando e que você apenas saiu dele é só digitar no terminal 'docker ps'</li>
-      <li>Para voltar ao container digite: docker attach CONTAINER-ID</li>
-    </ul>
-    <p>Verificando as alterações feitas no container: docker diff CONTAINER-ID</p>
+  <h3>Exemplo 2: criar um segundo container</h3>
+  <p>Agora iremos um segundo container NGINX usando outra porta no host (6660)  para a porta 80 do container. Vamos lá!</p>
+  <ul>
+    <li>Suba o novo container com: docker run -i -t -p 6660:80 maria/nginx-ubuntu:1.0 /bin/bash</li>
     
-    <h3>Exemplo 1</h3>
-    <p>Criar um container de um web server (NGINX), que irá exibir uma página mostrando que o programa funciona.Vamos lá!</p>
+    <li>Inicie o nginx: /etc/init.d/nginx start</li>
+    <li>Cheque se o nginx está sendo executado: ps -ef</li>
+    <li>Saia do container com ctrl+p+q</li>
+    <li>Verifique se a imagem está listada: docker ps</li>
+    <li>Vá ao browser e digite SEU-IP:6660. Irá aparecer a página do nginx respectiva a esse container que criamos.</li>
+    <img src="nginx.png">
+  </ul>
+  <p>Se quisermos checar se realmente os acessos a página estão ocorrendo fazemos:</p>
+  <ul>
+    <li>Acesse o container: docker attach CONTAINER-ID</li>
     <ul>
-      <li>Criar o container: docker run -i -t -p 8080:80 ubuntu:14.10 /bin/bash</li>
+      <li>No meu caso, esse comando não funcionou, o container travava, consegui rodar o container digitando: docker run -it IMAGE-NOME (docker run -it maria/nginx-ubuntu:1.0</li>
       <ul>
-        <li>-p == porta</li>
-        <li>8080 = porta da máquina física (host)</li>
-        <li>80 = porta do container</li>
-        <p>Dessa forma, pegaremos a porta 80 do container que irá expor essa porta na porta 8080 do ip da máquina (host). Com isso, acessando num browser, ao digitar 8080 irá exibir a página do web server que estará instalada no container rodando na porta 80 do container.</p>
-       </ul>
-      <li>Instalar o NGINX: apt-get install nginx</li>
-      <li>Para ver os processos funcionando: ps -ef</li>
-      <li>Iniciar o NGINX: /etc/init.d/nginx start</li>
-      <ul>
-        <li>OBS: pela minha máquina não consegui inslar inicialmente, pois o container estava com problemas com o apt-get update. Resolvi através <a href="https://futurestud.io/tutorials/how-to-fix-ubuntu-debian-apt-get-404-not-found-repository-errors"> desse link. </a>  </li>
+        <li><font color="red">Ajeitar essa parte, pois o comando run na verdade cria um novo container e a ideia é abrir um container já existente.OBS: <a href="https://github.com/moby/moby/issues/8521">resolvido aqui.</a></font></li>
       </ul>
-      <li>Podemos ver os processos do nginx através do comando: ps -ef</li>
-      <li>Verificando se a porta 80 está 'escutando' (LISTEN)  no container: netstat -atunp</li>
-      <li>Saia do container sem desligá-lo: ctrl+p+q</li>
-      <li>Vá ao seu browser e digite SEU-IP:8080. Irá aparecer no broser a seguinte página:</li>
-      <img src="nginx.png">
-      <li>Se digitarmos docker diff CONTAINER-ID iremos perceber que foram feitas várias alterações no container. Se fecharmos com ctrl+d tudo que foi alterado será perdido. Para evitar isso vamos fazer um commit nessas modificações, criando uma imagem desse container. Para fazer isso vamos digitar docker commit CONTAINER-ID NOME_QUE_VOCE_DARA_A_IMAGEM/TITULO_E_VERSÃO</li>
-      <ul>
-        <li>No caso do exemplo, ficará assim: docker commit ff4e50247633 maria/nginx-ubuntu:1.0</li>
-      </ul>
-      <li>Podemos checar a imagem 'commitada' usando o comando docker images</li>
     </ul>
-    
-    <h3>Exemplo 2: criar um segundo container</h3>
-    <p>Agora iremos um segundo container NGINX usando outra porta no host (6660)  para a porta 80 do container. Vamos lá!</p>
-    <ul>
-      <li>Suba o novo container com: docker run -i -t -p 6660:80 maria/nginx-ubuntu:1.0 /bin/bash</li>
-      
-      <li>Inicie o nginx: /etc/init.d/nginx start</li>
-      <li>Cheque se o nginx está sendo executado: ps -ef</li>
-      <li>Saia do container com ctrl+p+q</li>
-      <li>Verifique se a imagem está listada: docker ps</li>
-      <li>Vá ao browser e digite SEU-IP:6660. Irá aparecer a página do nginx respectiva a esse container que criamos.</li>
-      <img src="nginx.png">
-    </ul>
-    <p>Se quisermos checar se realmente os acessos a página estão ocorrendo fazemos:</p>
-    <ul>
-      <li>Acesse o container: docker attach CONTAINER-ID</li>
-      <ul>
-        <li>No meu caso, esse comando não funcionou, o container travava, consegui rodar o container digitando: docker run -it IMAGE-NOME (docker run -it maria/nginx-ubuntu:1.0</li>
-        <ul>
-          <li><font color="red">Ajeitar essa parte, pois o comando run na verdade cria um novo container e a ideia é abrir um container já existente.OBS: <a href="https://github.com/moby/moby/issues/8521">resolvido aqui.</a></font></li>
-        </ul>
-      </ul>
-      <li>Veja o log de acessos ao container: tail -f /var/log/nginx/access.log</li>
-    </ul>
+    <li>Veja o log de acessos ao container: tail -f /var/log/nginx/access.log</li>
+  </ul>
   <p>Por fim, se queremos parar um container: docker stop CONTAINER-ID</p>
   <p>Lembrando que sempre que quisermos abrir o container podemos fazer: docker run -ti IMAGE-NOME /bin/bash</p>
-  
+
+  <h2>Camadas e Copy-on-Write</h2>
+  <h3>Camadas</h3>
+  <p>O docker usa dois tipos de storage driver: AUFS e Device Mapper. Storage driver controla como as imagens e containers são armazenados e administrados no host do Docker</p>
+  <p><font color="red">AUFS</font>: sistema de unificação de arquivos, leva vários diretórios num só host, um sobre o outro e fornece visão unificada dos arquivos. Todos os dados são copiados para camada superior, podendo prejudicar o desempenho, já que se o arquivo for muito grande poderá demorar (a não ser que a imagem que você deseje utilizar esteja na primeira camada da imagem). O arquivo é copiado na primeira vez só, depois disso as operações serão mais rápidas, pois o arquivo estará já na última camada. A ordem de procura é de cima para baixo.Todas as camadas são apenas de leitura (read only), com exceção da última que é de leitura e escrita (read and write).</p>
+  <img src="aufs.png">
+
+  <h3>Copy-on-Write</h3>
+  <p>Vamos iniciar com uma analogia. Imagine-se escrevendo num caderno e imagine que no momento em que você coloca a ponta do lápis na superfície do papel o caderno que você segura vira instantaneamente uma cópia do caderno original que você segurava antes, onde você irá escrever na cópia e manter inalterado o caderno original. É assim que funciona o Copy on Write. Ou seja, o Copy-on-Write faz uma cópia do arquivo que se deseja editar e o joga para a camada de escrita que fica em cima, sem alterar o arquivo que está na camada read only.</p>  
+  <p><font color="red">Device Mapper</font>: armazena imagem e container em disco virtual. Copy-on-Write por bloco, mas não por arquivo (copia apenas os blocos, ao invés de copiar o arquivo todo). Mais veloz que o AUFS por causa disso, porém como os blocos são de 64kb, muitas dessas gravações podem gerar problemas de performance.</p>
+
+  <h2>Algumas features do kernel Linux que o Docker faz uso</h2>
+  <img src="strt.png">
+  <ul>
+    <li>namespaces: incorporado pelo kernel linux e permite fazer o isolamento de determinados componentes do sistema operacional. É um dos principais responsáveis pelo container tenha seu próprio ambiente.</li>
+    <ul>
+      <li>PID namespace: responsável por isolar os PIDs, fazendo com que cada container tenha sua árvore de processos. Isola os processos executados apenas no container, apesar que esses processos também são exibidos no host. É possível vê-los com ps -ef </li>
+      <li>NET namespace: faz o isolamento das interfaces de rede.</li>
+      <li>MNT (mount)  namespace: faz o isolamento de filesystem.</li>
+      <li>IPC namespace: isola o IPC e cria uma fila de mensagens POSIX própria. OBS: POSIX é uma interface de manipulação de filas de mensagens.</li>
+      <li>UTS namespace: isola o hostname, nome de domínio, a versão do sistema operacional.</li>
+      <li>USER namespace: faz isolamento de usuários e o mapa de identificação dos usuários.</li>
+      <p>OBS: apesar de isolar esses elementos, o namespaces não faz isolamento de CPU, memória, I/O, etc. Quem fará isso é o cgroups. </p>
+    </ul>
+    <li>cgroups: limita, faz isolamento e libera recursos aos containers de CPU, memória e I/O (limitando leitura e escrita).</li>
+    <li>netfilter: quando se utiliza o iptables se está interagindo com o módulo netfilter. O iptables são ferramentas e medidas de seguranças que permitem controlar e definir regras de firewalls e NATs, ajudando na filtragem de pacotes e melhorando a segurança. Ela comanda o módulo netfilter.</li>
+  </ul>
   <h2>Alguns Comandos:</h2>
+  <h3>docker run</h3>
+  <p>Executa uma imagem de container. Se a imagem não existe, ela faz o download. Ex: docker run hello-world</p>
+  
+  <h3>docker ps -a</h3>
+  <p>Visualiza todos os containers executados.</p>  
+
+  <h3>-d </h3>
+  <p>Faz com que o container rode como 'deamon', permitindo que rode em segundo plano.</p>
+  
+  <h3>docker create</h3>
+  <p>Cria o container, mas não faz nenhuma interação com ele. EX: docker create ubuntu</p>
+
+  <h3>docker pause</h3>
+  <p>Pausa o container. docker pause CONTAINER-ID</p>
+  
+  <h3>docker top</h3>
+  <p>Traz os processos rodando no container. docker top CONTAINER-ID</p>
+  
+  <h3>docker log</h3>
+  <p>Mostra o log do container. docker log CONTAINER-ID</p>
+
   <h3>docker exec</h3>
   <p>Usado quando quisermos usar um comando dentro do container. Exemplos:</p>
   <ul>
@@ -174,13 +226,34 @@
     <ul>
       <li>No nosso caso será: RUN apt-get update && apt-get install -y apache2 &&apt-get clean</li>
       <ul>
-      <li>apt-get update: atualiza a lista de diretórios.</li>
-      <li>-y: significa YES, é preciso usá-lo, para que confirme automaticamente a instalação do pacote.</li>
-      <li>clean: limpa todos os pacotes durante a instalação, para deixar o container bem enxuto.</li>
+        <li>apt-get update: atualiza a lista de diretórios.</li>
+        <li>-y: significa YES, é preciso usá-lo, para que confirme automaticamente a instalação do pacote.</li>
+        <li>clean: limpa todos os pacotes durante a instalação, para deixar o container bem enxuto.</li>
       </ul>
+    </ul>
+    <li>Próxima linha ENV: variáveis de ambiente. Essas variáveis são específicas do Apache e são importantes para o seu funcionamento, a pasta onde terá o arquivo de lock e de log, por exemplo.</li>
       <ul>
-        <li>OBS: para salvar e sair do VIM: esc+esc, depois :wq</li>
+        <li>ENV APACHE_LOCK_DIR="/var/lock"</li>
+        <li>ENV APACHE_PID_FILE="/var/run/apache2.pid"</li>
+        <li>ENV APACHE_RUN_USER="www-data"</li>
+        <li>ENV APACHE_RUN_GROUP="www-data"</li>
+        <li>ENV APACHE_LOG_DIR="/var/log/apache2"</li>
       </ul>
+    <li>Próxima linha LABEL: adiciona metadados à imagem. Nesse caso, iremos adicionar metadados para descrever a imagem ('Description')</li>
+      <ul>
+        <li>LABEL Description="Webserver"</li>
+        <li>OBS: vale lembrar que o Apache é um servidor web, responsáve por disponibilizar páginas e recursos acessados pela internet.</li>
+      </ul>
+    <li>Próxima linha VOLUME: pode ser apenas o mapeamento de pasta entre o host e container, bem como o mapeamento de uma pasta entre containers. Dessa forma, poderemos colocar os arquivos do nosso site posteriormente.</li>
+      <ul>
+        <li>VOLUME /var/www/html</li>
+        <li>/var/www/html = pasta root padrão do servidor web.</li>
+      </ul>
+    <li>Próxima linha EXPOSE: informa ao Docker que o container 'escuta' uma específica porta durante a execução. É possível especificar se a porta 'escuta' TPC ou UDP. Se não especificado, o padrão é TCP.</li>
+      <ul>
+        <li>EXPOSE 80</li>
+      </ul>
+    <li>OBS: para salvar e sair do VIM: esc+esc, depois :wq</li>
     </ul>
   </ul>  
   <h3>Construindo a imagem através do dockerfile (build)</h3>
@@ -247,17 +320,23 @@
   </ul>
 
   <h3>Limitando a CPU</h3>
-  <p>Limitar a CPU é um pouco diferente, por isso, vamos usar 3 containers nesses exemplos.</p>
+  <p>Vamos usar 2 containers nesse exemplo.</p>
   <ul>
     <li>Container 1: docker run -ti --cpu-shares 1024 debian /bin/bash</li>
-  </ul>
-  <ul>
     <li>Container 2: docker run -ti --cpu-shares 512 debian /bin/bash</li>
-  </ul>
-  <ul>
-    <li>Container 3: docker run -ti --cpu-shares 512 debian /bin/bash</li>
+    <li>Para inspecionar o gasto de CPU: docker inspect CONTAINER-ID | grep -i cpu </li>
   </ul>
 
+  <h3>Docker update</h3>
+  <p>Com essa função podemos atualizar o container mesmo que esteja em execução.</p>
+  <ul>
+    <li>Vá em 'docker ps' e copie o CONTAINER-ID de uma das imagens em execução.</li>
+    <li>Vamos pegar uma delas e atualizar o limite de memória da imagem: docker update -m 256M CONTAINER-ID</li>
+    <li>Cheque a mudança do valor 'Memory' do inspect em: docker inspect CONTAINER-ID | grep -i mem</li>
+    <li>Para mudar os valores da CPU: docker update --cpu-shares 512 CONTAINER-ID</li>
+    <li>Cheque a mudança do valor 'CPU' do inspect em: docker inspect CONTAINER-ID | grep -i cpu</li>
+   </ul>
+  <p>Caso deseje saber mais sobre o docker update digite: docker update --help</p>
   <header></header>
   <main></main>
   <footer></footer>
