@@ -352,8 +352,45 @@
     <li>Se você deseja ver endereço do diretório onde se encontra a pasta volume: docker inspect -f {{.Mounts}} CONTAINER-ID</li>
     <img src="vol2.png">
   </ul>
+  <p><i><b>Criando um volume num diretório específico:</b></i></p>
+  <ul>
+    <li>Crie um diretório com o nome que desejar: mkdir /root/NOME_DIRETORIO</li>
+    <ul>
+      <li>Se deseja criar o diretório no root digite 'su root', se ainda não tiver sua senha digite 'sudo passwd root'.</li>
+    </ul>
+    <li>Suba um container que aponte para esse diretório: docker run -ti /root/NOME_DIRETORIO:/NOME_VOLUME debian</li>
+    <ul>
+      <li>No caso fiz: docker run -ti -v /root/maria_dkf:/volume debian</li>
+    </ul>
+    <li>Acesse o diretório volume: cd volume/</li>
+    <li>Crie o arquivo Dockerfile no diretório volume: touch Dockerfile</li>
+    <li>Se você deseja ver endereço do diretório onde se encontra a pasta volume: docker inspect -f {{.Mounts}} CONTAINER-ID</li>
+  </ul>
+  <h3>Criando um container Data Only</h3>
+  <p>Primeiramente, um container Data Only é um container que não precisamos executar, apenas criamos e seus volumes serão compartilhados com outros containers. Vamos lá!</p>
+  <ul>
+    <li>Crie o container e especifique o volume: docker create -v /data --name dados_db centos</li>
+    <li>Compartilhar o volume desse container com outros containers: </li>
+    <p>Detalhes importantes:</p>
+    <ul>
+      <li>Nesse exemplo iremos passar para o volume o POSTGRESQL, ferramenta de gerenciamento de banco de dados relacionados.</li>
+      <li>docker run -d -p 5432:5432 --name post1 --volumes-from dados_db -e POSTGRESQL_USER=docker -e POSTGRESQL_PASS=docker -e POSTGRESQL_DB=docker kamui/postgresql</li>
+      <li>-p = relacionado a parte de redes do Docker. Quando queremos exportar/expor uma porta no container ou conectar a porta do container com a porta do host. No sentido da linha acima significa: a porta do host 5432 está ligada à porta do container 5432.</li>
+      <li>-e = relacionado à variáveis de ambiente (environment), usado quando precisamos passar uma variável de um ambiente específico, como é nesse caso onde estamos passando valores para o ambiente POSTGRESQL.</li>
+      <li>--volumes-from = quando importamos o volume de um outro container. Nesse caso, importamos os dados do container que criamos antes, de nome 'dados_db'.</li>
+    </ul>
+    <li>Vamos checar se os arquivos do POSTGRESQL foram realmente copiados para o volume do outro container (dados_db):</li>
+    <ul>
+      <li>Procure a pasta onde está o diretório dados_db: docker inspect -f {{.Mounts}} dados_db</li>
+      <img src="psql1.png">
+      <li>Copie o endereço do diretório e faça: cd ENDEREÇO_DIRETORIO</li>
+      <li>Dentro do diretório digite 'ls' e irá deverá aparecer listados dentre outros arquivos os arquivos do postgresql.</li>
+      <img src="psql2.png">
+    </ul>
+  </ul>
+  
   <header></header>
   <main></main>
   <footer></footer>
-  </body>
+</body>
 </html>
