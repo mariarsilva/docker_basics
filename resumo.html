@@ -7,7 +7,7 @@
 </head>
 <body>
   <h1>Tutorial Básico de Docker</h1>
-  <h2>Baseada nas video aulas do usuário do youtube <a href="https://www.youtube.com/channel/UCJnKVGmXRXrH49Tvrx5X0Sw">LINUXtips</a>.</h2>
+  <h2>Baseada nas video aulas do usuário do youtube <a href="https://www.youtube.com/channel/UCJnKVGmXRXrH49Tvrx5X0Sw">LINUXtips</a> e em pesquisas diversas.</h2>
   <p>Primeiro é preciso verificar se o Kernel do seu linux é 3.8. Veja isso digitando no terminal uname -r</p>
   <p><a href="https://docs.docker.com/engine/install/ubuntu/">Instalar o Docker.</a></p>
   <p>Iniciar o Docker: /etc/init.d/docker start</p>
@@ -337,6 +337,21 @@
     <li>Cheque a mudança do valor 'CPU' do inspect em: docker inspect CONTAINER-ID | grep -i cpu</li>
    </ul>
   <p>Caso deseje saber mais sobre o docker update digite: docker update --help</p>
+
+  <h2>Volumes</h2>
+  <p>Volume é uma forma de colocar um filesystem dentro do container. Ele está montado no container, mas não faz parte do container, ficando armazenados dentro do Host Docker e fora das camadas UFS (Union File System). Podem ser anônimos ou nomeados.</p>
+  <p>Para entendermos melhor, precisamos estar cientes de certas informações. A primeira é de que o clico de vida dos containers é efêmero e imutável, pois as mudanças feitas são perdidas quando o container 'morrer'. Entretanto em alguns momentos iremos precisar de persistência de dados. Persistência de dados são registros permanentes que não são perdidos quando há encerramento da sessão.</p>
+  <p>Os volumes nomeados criam o volume antes de criar e iniciar o container ou criam o volume no momento da criação e inicialização do container.</p>
+  <p>IMPORTANTE: se 'matamos' um container, seu volume persiste, não é excluído junto com ele.</p>
+  <p><i><b>Subir um container passando um volume:</b></i></p>
+  <ul>
+    <li>docker run -ti -v /volume ubuntu /bin/bash</li>
+    <li>Veja as partições e o quanto você está usando de cada uma delas: df -h</li>
+    <img src="vol1.png">
+    <li>Dentro do container, podemos ver a pasta volume digitando 'cd /' e depois 'ls'</li>
+    <li>Se você deseja ver endereço do diretório onde se encontra a pasta volume: docker inspect -f {{.Mounts}} CONTAINER-ID</li>
+    <img src="vol2.png">
+  </ul>
   <header></header>
   <main></main>
   <footer></footer>
