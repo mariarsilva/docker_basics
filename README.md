@@ -1,2 +1,2 @@
-# docker_basics
-# docker_basics
+# Resumo Docker
+Esse resumo é basedo nas video aulas do usuário do youtube LINUXtips e de pesquisas diversas.
