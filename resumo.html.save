@@ -76,15 +76,12 @@
     </ul>
     <li>Podemos checar a imagem 'commitada' usando o comando docker images</li>
   </ul>
+    
   <h3>Exemplo 2: criar um segundo container</h3>
   <p>Agora iremos um segundo container NGINX usando outra porta no host (6660)  para a porta 80 do container. Vamos lá!</p>
   <ul>
     <li>Suba o novo container com: docker run -i -t -p 6660:80 maria/nginx-ubuntu:1.0 /bin/bash</li>
-  </ul>    
-  <h3>Exemplo 2: criar um segundo container</h3>
-  <p>Agora iremos um segundo container NGINX usando outra porta no host (6660)  para a porta 80 do container. Vamos lá!</p>
-  <ul>
-    <li>Suba o novo container com: docker run -i -t -p 6660:80 maria/nginx-ubuntu:1.0 /bin/bash</li>
+    
     <li>Inicie o nginx: /etc/init.d/nginx start</li>
     <li>Cheque se o nginx está sendo executado: ps -ef</li>
     <li>Saia do container com ctrl+p+q</li>
@@ -235,17 +232,14 @@
     <ul>
       <li>Exemplo: ENTRYPOINT ["/home/maria/superset/", "-D", "FOREGROUND"]</li>
     </ul>
+    <li>USER: informa o usuário default da imagem. Se não for informado, o usuário padrão será 'root'</li>
+    <li>WORKDIR: informa qual o diretório raiz do container</li>
+    <ul>
+      <li>Exemplo: WORKDIR /home/Documentos</li>
+    </ul>
     <li>RUN: comando que se deseja executar</li>
     <ul>
       <li>No nosso caso será: RUN apt-get update && apt-get install -y apache2 && apt-get clean</li>
-    <li>Próxima linha MAINTAINER: nome de quem criou o dockerfile </li>
-    <ul>
-      <li>No nosso caso será: MAINTAINER maria@email.com</li>
-      <li>OBS: MAINTAINER é uma label <a href="https://cursos.alura.com.br/forum/topico-maintainer-deprecated-87916">depreciada</a>. O novo formato é LABEL mantainer="nome"</li>
-    </ul>
-    <li>Próxima linha RUN: comando que se deseja executar</li>
-    <ul>
-      <li>No nosso caso será: RUN apt-get update && apt-get install -y apache2 &&apt-get clean</li>
       <ul>
         <li>apt-get update: atualiza a lista de diretórios.</li>
         <li>-y: significa YES, é preciso usá-lo, para que confirme automaticamente a instalação do pacote.</li>
@@ -254,8 +248,6 @@
       <li>Importante: quanto menos comandos RUN você tiver no Dockerfile melhor, pois cada RUN executado cria uma nova camada, sendo dificíl administrá-los depois. Sempre que possível, concatene vários comandos no RUN usando o '&&', e ainda é recomendado usar no final do RUN o 'apt-get clean' para limpar arquivos desnecessários desses comandos, deixando o container mais enxuto.</li>
     </ul>
     <li>ENV: variáveis de ambiente. Essas variáveis são específicas do Apache e são importantes para o seu funcionamento, a pasta onde terá o arquivo de lock e de log, por exemplo.</li>
-    </ul>
-    <li>Próxima linha ENV: variáveis de ambiente. Essas variáveis são específicas do Apache e são importantes para o seu funcionamento, a pasta onde terá o arquivo de lock e de log, por exemplo.</li>
       <ul>
         <li>ENV APACHE_LOCK_DIR="/var/lock"</li>
         <li>ENV APACHE_PID_FILE="/var/run/apache2.pid"</li>
@@ -274,17 +266,6 @@
         <li>/var/www/html = pasta root padrão do servidor web.</li>
       </ul>
     <li>EXPOSE: informa ao Docker que o container 'escuta' uma específica porta durante a execução. É possível especificar se a porta 'escuta' TPC ou UDP. Se não especificado, o padrão é TCP.</li>
-    <li>Próxima linha LABEL: adiciona metadados à imagem. Nesse caso, iremos adicionar metadados para descrever a imagem ('Description')</li>
-      <ul>
-        <li>LABEL Description="Webserver"</li>
-        <li>OBS: vale lembrar que o Apache é um servidor web, responsáve por disponibilizar páginas e recursos acessados pela internet.</li>
-      </ul>
-    <li>Próxima linha VOLUME: pode ser apenas o mapeamento de pasta entre o host e container, bem como o mapeamento de uma pasta entre containers. Dessa forma, poderemos colocar os arquivos do nosso site posteriormente.</li>
-      <ul>
-        <li>VOLUME /var/www/html</li>
-        <li>/var/www/html = pasta root padrão do servidor web.</li>
-      </ul>
-    <li>Próxima linha EXPOSE: informa ao Docker que o container 'escuta' uma específica porta durante a execução. É possível especificar se a porta 'escuta' TPC ou UDP. Se não especificado, o padrão é TCP.</li>
       <ul>
         <li>EXPOSE 80</li>
       </ul>
@@ -423,49 +404,10 @@
       <img src="psql2.png">
     </ul>
   </ul>
-  <h2>Subindo o arquivo docker para o DockerHub</h2>
-  <p>DockerHub é um repositório público/privado que é acessado pela web, onde usuários podem compartilhar suas imagens personalizadas, sejam empresas ou usuários individuais. Na conta gratuita, você tem direito a apenas um repositório privado, mas ilimitados repositórios públicos.</p>
-  <p>Você pode fazer o login pelo site ou no terminal digitando 'docker login'</p>
-  <p>Se você usa outro repositório sem ser o DockerHub, terá que acessar digitando no terminal 'docker URL'</p>
-  <p>Para checar se as imagens são confiáveis você pode usar o comando 'docker inspect CONTAINER-NOME'</p>
-  <p>Para checar mais detalhes da imagens você pode ver o histórico dela em 'docker history CONTAINER-NOME'</p>
-  <p>OBS:para ajudar na segurança, priorize imagens que possuam Dockerfile para ter maior controle.</p>
-  <h3>Preparando uma imagem para subir no Dockerhub</h3>
-  <ul>
-    <li>Crie uma imagem ou pegue a IMAGE-ID de uma imagem própria e no terminal: docker tag IMAGEM-ID NOME-DO-USUARIO/SERVIÇO:VERSÃO</li>
-    <ul><li>Exemplo: docker tag 1318b700e415 mariarsilva/ubuntu:1.0</li></ul>
-    <li>Pegue sua imagem local e suba pro DockerHub: 'docker push IMAGE-ID' 'docker push REPOSITORY'</li>
-    <ul><li>As vezes pode demorar para subir, mas tente checar algumas horas depois e estará lá no site docker hub.</li></ul>
-    <li>Para checar pelo terminal se foi feito realmente o upload da imagem: docker search NOME-USUARIO</li>
-    <li>Excluindo a imagem do seu pc: docker rmi -f REPOSITORY:VERSÃO</li>
-    <ul><li>Exemplo: docker rmi -f mariarsilva/ubuntu:1.0</li></ul>
-    <li>Fazendo o download da imagem: docker pull REPOSITORY:VERSÃO.</li>
-    <ul><li>Exemplo: docker pull mariarsilvaqubuntu:1.0</li></ul>
-  </ul>
-
-  <h2>Criando Docker Registry</h2>
-  <p>Muitas vezes, por motivos de seguranças as empresas ou usuários não desejam usar as imagens do Docker Hub nem subir suas próprias imagens para a web. Elas fazem, então o Docker Registry.</p>
-  <p>Fazemos usando o seguinte comando:</p>
-  <ul>
-    <li>docker run -d -p 5000:5000 --restart=always --name registry registry:2</li>
-    <ul>
-      <li>-d = para o docker rodar como daemon (como processo). Isso significa que ele roda em segundo plano.</li>
-      <li>-p = usada para linkar a porta do Docker host com a porta do container nos valores XXXX:XXXX</li>
-      <li>5000:5000 = a porta do registry é a porta 5000, logo iremos fazer o ping da porta 5000 do Docker host com a porta 5000 do container para ser dado o registry.</li>
-      <li>--restart=always = usando esse parâmetro, se o Docker tiver qualquer problema, ele irá reiniciar o container, assim, quando o docker reiniciar esse container reinicia junto, pois precisaremos do registry pois é nele que iremos fazer o download e upload das imagens para a rede local. </li>
-      <li>--name registry registry:2 = nome do container, nesse caso, o nome será 'registry' e sua versão será a versão 2</li>
-    </ul>
-    <li>Para checar se o registry está rodando mesmo: docker ps</li>
-    <li>Para checar se o registry está listado: docker images | grep registry</li>
-  </ul>
-  <p>Agora, para jogar (push) imagens para esse repositório:</p>
-  <ul>
-    <li>Primeiro, verifique a imagem que você quer usar e a renomeie: docker tag IMAGE-ID NOVO-NOME:VERSÃO</li>
-    <ul><li>Exemplo: docker tag d1165f221234 localhost:5000/hello-world:1.0</li></ul>
-    <li>Vamos jogar (push) essa imagem para dentro do registry (local): docker push REPOSITORY</li>
-    <ul><li>Exemplo: docker push localhost:5000/hello-world</li></ul>
-    <li>Para fazer o download da imagem localizada no registry: docker pull REPOSITORY</li>
-    <li>Para visualizar as imagens localizadas no registry: curl localhost:5000/v2/_catalog</li>
-  </ul>
+  
+  <h2>Compartilhando imagems docker</h2>
+  <h3>Docker Hub</h3>
+  <p>Repositório público/privado onde se disponibilizam imagens, podem ser subidas por empresas ou por usuários. Na conta gratuita você pode ter um repositório privado e todos os demais serão públicos. Numa conta privada você pode gerenciar as imagens da sua empresa pela ferramenta.</p>
+  
 </body>
 </html>
